@@ -1,5 +1,6 @@
 import Decoder from './Decoder';
 import VideoConverter from 'h264-converter';
+import { setLogger } from 'h264-converter';
 import VideoSettings from '../VideoSettings';
 import Size from '../Size';
 
@@ -32,11 +33,12 @@ export default class NativeDecoder extends Decoder {
             e.preventDefault();
             return false;
         };
+        setLogger(console.log, console.error);
     }
 
     public play(): void {
         super.play();
-        if (this.getState() !== Decoder.STATE.PLAYING || !this.screenInfo) {
+        if (this.getState() !== Decoder.STATE.PLAYING) {
             return;
         }
         if (!this.converter) {
@@ -60,6 +62,10 @@ export default class NativeDecoder extends Decoder {
     public stop(): void {
         super.stop();
         this.stopConverter();
+    }
+
+    protected needScreenInfoBeforePlay(): boolean {
+        return false;
     }
 
     public setVideoSettings(videoSettings: VideoSettings): void {

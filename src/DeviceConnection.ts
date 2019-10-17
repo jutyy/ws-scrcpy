@@ -218,6 +218,7 @@ export class DeviceConnection {
     }
 
     private init(): void {
+        let first = true;
         const ws = this.ws;
 
         ws.onerror = (e: Event | string) => {
@@ -238,6 +239,16 @@ export class DeviceConnection {
         };
 
         ws.onmessage = (e: MessageEvent) => {
+            // Workaround for qvh
+            if (first) {
+                first = false;
+                this.decoders.forEach(decoder => {
+                    const STATE = Decoder.STATE;
+                    if (decoder.getState() !== STATE.PLAYING) {
+                        decoder.play();
+                    }
+                });
+            }
             if (e.data instanceof ArrayBuffer) {
                 const data = new Uint8Array(e.data);
                 const magicBytes = new Uint8Array(e.data, 0, MAGIC.length);

@@ -16,7 +16,7 @@ export default abstract class Decoder {
     }
 
     public play(): void {
-        if (!this.screenInfo) {
+        if (this.needScreenInfoBeforePlay() && !this.screenInfo) {
             return;
         }
         this.state = Decoder.STATE.PLAYING;
@@ -48,6 +48,10 @@ export default abstract class Decoder {
 
     public setVideoSettings(videoSettings: VideoSettings): void {
         this.videoSettings = videoSettings;
+    }
+
+    protected needScreenInfoBeforePlay(): boolean {
+        return true;
     }
 
     public getScreenInfo(): ScreenInfo | undefined {
