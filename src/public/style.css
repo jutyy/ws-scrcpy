@@ -23,6 +23,10 @@ body {
     top: 0;
 }
 
+.device-view {
+    height: 100%;
+}
+
 .decoder-controls-wrapper {
     padding: 10px;
     border: solid 1px #778899;

@@ -1,8 +1,9 @@
 import Decoder from './Decoder';
 import VideoConverter from 'h264-converter';
-import { setLogger } from 'h264-converter';
 import VideoSettings from '../VideoSettings';
 import Size from '../Size';
+import ScreenInfo from '../ScreenInfo';
+import Rect from '../Rect';
 
 export default class NativeDecoder extends Decoder {
     public static readonly preferredVideoSettings: VideoSettings = new VideoSettings({
@@ -26,6 +27,11 @@ export default class NativeDecoder extends Decoder {
 
     constructor(protected tag: HTMLVideoElement, private fpf: number = NativeDecoder.DEFAULT_FRAME_PER_FRAGMENT) {
         super(tag);
+        tag.onloadedmetadata = function(this: NativeDecoder): void {
+            const width = tag.videoWidth;
+            const height = tag.videoHeight;
+            this.setScreenInfo(new ScreenInfo(new Rect(0, 0, width, height), new Size(width, height), false));
+        }.bind(this);
         tag.onerror = function(e: Event | string): void {
             console.error(e);
         };
@@ -33,7 +39,8 @@ export default class NativeDecoder extends Decoder {
             e.preventDefault();
             return false;
         };
-        setLogger(console.log, console.error);
+        // import { setLogger } from 'h264-converter';
+        // setLogger(console.log, console.error);
     }
 
     public play(): void {
@@ -91,5 +98,9 @@ export default class NativeDecoder extends Decoder {
             this.converter.pause();
             delete this.converter;
         }
+    }
+    public setScreenInfo(screenInfo: ScreenInfo): void {
+        console.log(`${this.TAG}.setScreenInfo(${screenInfo})`);
+        this.screenInfo = screenInfo;
     }
 }

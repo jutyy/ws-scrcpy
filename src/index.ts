@@ -16,6 +16,14 @@ class Main {
 
     constructor() {
         Main.instance = this;
+        const addressInput = document.getElementById(Main.addressInputId);
+        if (addressInput) {
+            const port = document.location.port ? document.location.port :
+                document.location.protocol === 'http' ? '80' :
+                document.location.protocol === 'https' ? '443' : '80';
+            const url = `ws://${document.location.hostname}:${port}/ws`;
+            addressInput.setAttribute('value', url);
+        }
     }
 
     public static getInstance(): Main {
@@ -84,9 +92,9 @@ class Main {
         };
         ws.onclose = () => {
             console.log('Connection closed');
-            setTimeout(() => {
-                this.listen();
-            }, 2000);
+            // setTimeout(() => {
+            //     this.listen();
+            // }, 2000);
         };
         ws.onmessage = (e: MessageEvent) => {
             let data: IDevice[];

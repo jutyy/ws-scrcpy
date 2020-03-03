@@ -196,6 +196,7 @@ export class DeviceConnection {
     public sendEvent(event: ControlEvent): void {
         if (this.haveConnection()) {
             this.ws.send(event.toBuffer());
+            console.log(event.toString());
         } else {
             this.events.push(event);
         }
@@ -251,8 +252,12 @@ export class DeviceConnection {
             }
             if (e.data instanceof ArrayBuffer) {
                 const data = new Uint8Array(e.data);
-                const magicBytes = new Uint8Array(e.data, 0, MAGIC.length);
-                const text = Util.utf8ByteArrayToString(magicBytes);
+                let magicBytes;
+                let text;
+                if (data.length >= MAGIC.length) {
+                    magicBytes = new Uint8Array(e.data, 0, MAGIC.length);
+                    text = Util.utf8ByteArrayToString(magicBytes);
+                }
                 if (text === MAGIC) {
                     if (data.length === DEVICE_INFO_LENGTH) {
                         let nameBytes = new Uint8Array(e.data, MAGIC.length, DEVICE_NAME_FIELD_LENGTH);

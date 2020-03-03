@@ -29,6 +29,7 @@ export class DeviceController implements IDeviceMessageListener {
         const decoderName = this.decoder.getName();
         const controlsWrapper = this.controls = document.createElement('div');
         const deviceView = this.deviceView = document.createElement('div');
+        deviceView.className = 'device-view';
         const connection = DeviceConnection.getInstance(params.url);
         const stream = params.videoSettings;
         connection.addDecoder(this.decoder);
